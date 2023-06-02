@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
-export default styled.button`
-  height: 52px;
+export const Button = styled.button`
+height: 52px;
   border: none;
   outline: none;
   padding: 0 16px;
@@ -12,6 +12,11 @@ export default styled.button`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
   color: #fff;
   transition: background 0.2s ease-in;
+
+  // flex para alinhar o componente spinner quando ele estiver no botão
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary.light};
