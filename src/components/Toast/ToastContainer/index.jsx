@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toastEventManager } from '../../../utils/toast';
+
 import * as S from './styles';
 import ToastMessage from '../ToastMessage';
 
@@ -8,10 +9,12 @@ export default function ToastContainer() {
 
   // listener que monitora o disparo de 'addtoast' em qualquer lugar da aplicação
   useEffect(() => {
-    function handleAddToast({ type, text }) {
+    function handleAddToast({ type, text, duration }) {
       setMessages((prevState) => [
         ...prevState,
-        { id: Math.random(), type, text },
+        {
+          id: Math.random(), type, text, duration,
+        },
       ]);
     }
 
@@ -22,11 +25,11 @@ export default function ToastContainer() {
     };
   }, []);
 
-  const handleRemoveMessage = (id) => {
+  const handleRemoveMessage = useCallback((id) => {
     setMessages((prevState) => prevState.filter(
       (message) => message.id !== id,
     ));
-  };
+  }, []);
 
   return (
     <S.Container>

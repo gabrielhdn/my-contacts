@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
+
 import * as S from './styles';
 import Button from '../Button';
 
