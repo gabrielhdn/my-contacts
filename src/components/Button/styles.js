@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Button = styled.button`
-height: 52px;
+  height: 52px;
   border: none;
   outline: none;
   padding: 0 16px;
@@ -27,8 +27,8 @@ height: 52px;
   }
 
   &[disabled] {
-    background: #ccc;
-    cursor: default;
+    background: #ccc !important;
+    cursor: default !important;
   }
 
   ${({ theme, danger }) => danger && css`

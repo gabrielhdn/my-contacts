@@ -1,33 +1,73 @@
 import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
 
 import * as S from './styles';
 import Button from '../Button';
+import ReactPortal from '../ReactPortal';
 
-export default function Modal({ danger }) {
-  return ReactDOM.createPortal(
-    <S.Overlay>
-      <S.Container danger={danger}>
-        <h1>Modal Title</h1>
-        <p>Modal Body</p>
-        <S.Footer>
-          <button type="button" className="cancel-button">
-            Cancel
-          </button>
-          <Button type="button" danger={danger}>
-            Delete
-          </Button>
-        </S.Footer>
-      </S.Container>
-    </S.Overlay>,
-    document.getElementById('modal-root'),
+export default function Modal({
+  danger,
+  title,
+  children,
+  cancelLabel,
+  confirmLabel,
+  onCancel,
+  onConfirm,
+  visible,
+  isLoading,
+}) {
+  if (!visible) {
+    return null;
+  }
+
+  return (
+    <ReactPortal containerId="modal-root">
+      <S.Overlay>
+        <S.Container danger={danger}>
+          <h1>{title}</h1>
+
+          <div className="modal-body">
+            {children}
+          </div>
+
+          <S.Footer>
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={onCancel}
+              disabled={isLoading}
+            >
+              {cancelLabel}
+            </button>
+            <Button
+              type="button"
+              danger={danger}
+              onConfirm={onConfirm}
+              isLoading={isLoading}
+            >
+              {confirmLabel}
+            </Button>
+          </S.Footer>
+        </S.Container>
+      </S.Overlay>
+    </ReactPortal>
   );
 }
 
 Modal.propTypes = {
   danger: PropTypes.bool,
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  cancelLabel: PropTypes.string,
+  confirmLabel: PropTypes.string,
+  onCancel: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  visible: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool,
 };
 
 Modal.defaultProps = {
   danger: false,
+  cancelLabel: 'Cancel',
+  confirmLabel: 'Confirm',
+  isLoading: false,
 };

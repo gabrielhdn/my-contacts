@@ -29,6 +29,13 @@ class HttpClient {
     });
   }
 
+  delete(endpoint, options) {
+    return this.makeRequest(endpoint, {
+      method: 'DELETE',
+      headers: options?.headers,
+    });
+  }
+
   async makeRequest(endpoint, options) {
     await delay(500); // simulação de delay
 
@@ -52,10 +59,11 @@ class HttpClient {
       headers,
     });
 
+    // * será undefined se a resposta não tiver corpo (204 No Content)
     const contentType = response.headers.get('Content-Type');
 
     // garante que existe um body com conteúdo json na resposta
-    if (contentType.includes('application/json')) {
+    if (contentType?.includes('application/json')) {
       data = await response.json();
     }
 

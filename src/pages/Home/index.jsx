@@ -9,6 +9,7 @@ import {
 import * as S from './styles';
 import Button from '../../components/Button';
 import Loader from '../../components/Loader';
+import Modal from '../../components/Modal';
 
 import arrowIcon from '../../assets/images/icons/arrow.svg';
 import editIcon from '../../assets/images/icons/notepad.svg';
@@ -18,6 +19,7 @@ import emptyBox from '../../assets/images/emptyBox.svg';
 import notFoundMagnifier from '../../assets/images/magnifier.svg';
 
 import formatPhone from '../../utils/formatPhone';
+import toast from '../../utils/toast';
 import ContactService from '../../services/ContactService';
 
 export default function Home() {
@@ -26,6 +28,9 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const filteredContacts = useMemo(() => contacts.filter(
     ({ name }) => name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -41,7 +46,6 @@ export default function Home() {
       setContacts(contactsList);
     } catch (e) {
       setHasError(true);
-      // seria possível pegar a mensagem de erro e tratar cada caso separadamente
     } finally {
       setIsLoading(false);
     }
@@ -63,9 +67,58 @@ export default function Home() {
     fetchContacts();
   };
 
+  const handleOpenDeleteModal = (contact) => {
+    setContactBeingDeleted(contact);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsModalVisible(false);
+    setContactBeingDeleted(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setIsDeleteLoading(true);
+
+      await ContactService.deleteContact(contactBeingDeleted.id);
+
+      setContacts((prevState) => prevState.filter(
+        (contact) => contact.id !== contactBeingDeleted.id,
+      ));
+      handleCloseDeleteModal();
+
+      toast({
+        type: 'success',
+        text: 'Contact successfully deleted!',
+        duration: 5000,
+      });
+    } catch {
+      toast({
+        type: 'danger',
+        text: 'Failed to delete this contact!',
+        duration: 5000,
+      });
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
+
   return (
     <S.Container>
       <Loader isLoading={isLoading} />
+
+      <Modal
+        danger
+        title={`Are you sure you want to delete the contact "${contactBeingDeleted?.name}"?`}
+        confirmLabel="Delete"
+        onCancel={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        visible={isModalVisible}
+        isLoading={isDeleteLoading}
+      >
+        <p>This action cannot be undone.</p>
+      </Modal>
 
       {contacts.length > 0 && (
         <S.InputSearchContainer>
@@ -162,7 +215,10 @@ export default function Home() {
                 <Link to={`/edit/${contact.id}`}>
                   <img src={editIcon} alt="Edit Icon" />
                 </Link>
-                <button type="button">
+                <button
+                  type="button"
+                  onClick={() => handleOpenDeleteModal(contact)}
+                >
                   <img src={deleteIcon} alt="Delete Icon" />
                 </button>
               </div>
