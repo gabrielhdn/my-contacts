@@ -1,34 +1,37 @@
 import { useRef } from 'react';
+
 import PageHeader from '../../components/PageHeader';
 import ContactForm from '../../components/ContactForm';
+
 import ContactService from '../../services/ContactService';
 import toast from '../../utils/toast';
+import useSafeAsyncAction from '../../hooks/useSafeAsyncAction';
 
 export default function NewContact() {
   const contactFormRef = useRef(null);
+  const safeAsyncAction = useSafeAsyncAction();
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (contact) => {
     try {
-      const contact = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        category_id: formData.categoryId,
-      };
-
       await ContactService.createContact(contact);
-      contactFormRef.current.resetFields();
 
-      toast({
-        type: 'success',
-        text: 'Contact successfully created!',
-        duration: 5000,
+      // só acontece se o componente estiver montado
+      safeAsyncAction(() => {
+        contactFormRef.current.resetFields();
+
+        toast({
+          type: 'success',
+          text: 'Contact successfully created!',
+          duration: 5000,
+        });
       });
     } catch {
-      toast({
-        type: 'danger',
-        text: 'Failed to register a new contact!',
-        duration: 5000,
+      safeAsyncAction(() => {
+        toast({
+          type: 'danger',
+          text: 'Failed to register a new contact!',
+          duration: 5000,
+        });
       });
     }
   };
