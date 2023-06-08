@@ -3,14 +3,14 @@ import Spinner from '../Spinner';
 import * as S from './styles';
 
 export default function Button({
-  type, disabled, isLoading, children, danger, onConfirm,
+  type, disabled, isLoading, children, danger, onClick,
 }) {
   return (
     <S.Button
       type={type}
       disabled={disabled || isLoading}
       danger={danger}
-      onClick={onConfirm}
+      onClick={onClick}
     >
       {
         isLoading
@@ -27,7 +27,7 @@ Button.propTypes = {
   isLoading: PropTypes.bool,
   children: PropTypes.node.isRequired,
   danger: PropTypes.bool,
-  onConfirm: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 Button.defaultProps = {
@@ -35,5 +35,5 @@ Button.defaultProps = {
   disabled: false,
   isLoading: false,
   danger: false,
-  onConfirm: undefined,
+  onClick: undefined,
 };

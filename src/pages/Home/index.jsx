@@ -1,22 +1,17 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-/* eslint-disable no-nested-ternary */
 
-import { Link } from 'react-router-dom';
+import InputSearch from './components/InputSearch';
+import Header from './components/Header';
+import ErrorStatus from './components/ErrorStatus';
+import EmptyList from './components/EmptyList';
+import SearchNotFound from './components/SearchNotFound';
+import ContactsList from './components/ContactsList';
 
-import * as S from './styles';
-import Button from '../../components/Button';
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
 
-import arrowIcon from '../../assets/images/icons/arrow.svg';
-import editIcon from '../../assets/images/icons/notepad.svg';
-import deleteIcon from '../../assets/images/icons/rubbishbin.svg';
-import sadFace from '../../assets/images/sadFace.svg';
-import emptyBox from '../../assets/images/emptyBox.svg';
-import notFoundMagnifier from '../../assets/images/magnifier.svg';
-
-import formatPhone from '../../utils/formatPhone';
 import useHome from './useHome';
+import * as S from './styles';
 
 export default function Home() {
   const {
@@ -37,126 +32,53 @@ export default function Home() {
     handleOpenDeleteModal,
   } = useHome();
 
+  const hasContacts = contacts.length > 0;
+  const isListEmpty = !isLoading && !hasContacts;
+  const isSearchResultEmpty = hasContacts && filteredContacts.length === 0;
+
   return (
     <S.Container>
       <Loader isLoading={isLoading} />
 
-      <Modal
-        danger
-        title={`Are you sure you want to delete the contact "${contactBeingDeleted?.name}"?`}
-        confirmLabel="Delete"
-        onCancel={handleCloseDeleteModal}
-        onConfirm={handleConfirmDelete}
-        visible={isModalVisible}
-        isLoading={isDeleteLoading}
-      >
-        <p>This action cannot be undone.</p>
-      </Modal>
-
-      {contacts.length > 0 && (
-        <S.InputSearchContainer>
-          <input
-            value={searchTerm}
-            type="text"
-            placeholder="Search for a contact by name"
-            onChange={handleSearchTermChange}
-          />
-        </S.InputSearchContainer>
+      {hasContacts && (
+        <InputSearch
+          value={searchTerm}
+          onChange={handleSearchTermChange}
+        />
       )}
 
-      <S.Header
-        justifyContent={
-          hasError
-            ? 'flex-end'
-            : (
-              contacts.length > 0
-                ? 'space-between'
-                : 'center'
-            )
-        }
-      >
-        {(!hasError && contacts.length > 0) && (
-          <strong>
-            {filteredContacts.length}
-            {' '}
-            {filteredContacts.length === 1 ? 'contact' : 'contacts'}
-          </strong>
-        )}
-        <Link to="/new">New contact</Link>
-      </S.Header>
+      <Header
+        hasError={hasError}
+        contactsQty={contacts.length}
+        filteredContactsQty={filteredContacts.length}
+      />
 
-      {hasError && (
-        <S.ErrorContainer>
-          <img src={sadFace} alt="Error Icon" />
-          <div className="details">
-            <strong>An error has occurred while trying to obtain your contacts!</strong>
-            <Button
-              type="button"
-              onClick={handleTryAgain}
-            >
-              Try again
-            </Button>
-          </div>
-        </S.ErrorContainer>
-      )}
+      {hasError && <ErrorStatus onTryAgain={handleTryAgain} />}
 
       {!hasError && (
         <>
-          {(contacts.length < 1 && !isLoading) && (
-            <S.EmptyListContainer>
-              <img src={emptyBox} alt="Empty box" />
-              <p>
-                You don&apos;t have any registered contacts.
-                Click <strong>&quot;New contact&quot;</strong> to create your first one!
-              </p>
-            </S.EmptyListContainer>
-          )}
+          {isListEmpty && <EmptyList />}
 
-          {(contacts.length > 0 && filteredContacts.length === 0) && (
-            <S.SearchNotFoundContainer>
-              <img src={notFoundMagnifier} alt="Not found magnifier" />
-              <span>No results were found for <strong>&quot;{searchTerm}&quot;</strong>.</span>
-            </S.SearchNotFoundContainer>
-          )}
+          {isSearchResultEmpty && <SearchNotFound searchTerm={searchTerm} />}
 
-          {filteredContacts.length > 0 && (
-          <S.ListHeader orderBy={orderBy}>
-            <button
-              type="button"
-              onClick={handleOrderByToggle}
-            >
-              <span>Name</span>
-              <img src={arrowIcon} alt="Arrow" />
-            </button>
-          </S.ListHeader>
-          )}
+          <ContactsList
+            orderBy={orderBy}
+            onOrderByToggle={handleOrderByToggle}
+            onOpenDeleteModal={handleOpenDeleteModal}
+            filteredContacts={filteredContacts}
+          />
 
-          {filteredContacts.map((contact) => (
-            <S.Card key={contact.id}>
-              <div className="info">
-                <div className="contact-name">
-                  <strong>{contact.name}</strong>
-                  {contact.category.name && (
-                  <small>{contact.category.name}</small>
-                  )}
-                </div>
-                <span>{contact.email}</span>
-                <span>{formatPhone(contact.phone)}</span>
-              </div>
-
-              <div className="actions">
-                <Link to={`/edit/${contact.id}`}>
-                  <img src={editIcon} alt="Edit Icon" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => handleOpenDeleteModal(contact)}
-                >
-                  <img src={deleteIcon} alt="Delete Icon" />
-                </button>
-              </div>
-            </S.Card>
-          ))}
+          <Modal
+            danger
+            title={`Are you sure you want to delete the contact "${contactBeingDeleted?.name}"?`}
+            confirmLabel="Delete"
+            onCancel={handleCloseDeleteModal}
+            onConfirm={handleConfirmDelete}
+            visible={isModalVisible}
+            isLoading={isDeleteLoading}
+          >
+            <p>This action cannot be undone.</p>
+          </Modal>
         </>
       )}
     </S.Container>

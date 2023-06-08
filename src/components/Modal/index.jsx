@@ -41,7 +41,7 @@ export default function Modal({
             <Button
               type="button"
               danger={danger}
-              onConfirm={onConfirm}
+              onClick={onConfirm}
               isLoading={isLoading}
             >
               {confirmLabel}
