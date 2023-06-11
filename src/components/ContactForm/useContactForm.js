@@ -15,7 +15,6 @@ export default function useContactForm(onSubmit, ref) {
   const [phone, setPhone] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useSafeAsyncState([]);
-  const [categoryError, setCategoryError] = useSafeAsyncState(null);
   const [areCategoriesLoading, setAreCategoriesLoading] = useSafeAsyncState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,7 +22,8 @@ export default function useContactForm(onSubmit, ref) {
     errors, setError, removeError, getErrorMessageByFieldName,
   } = useErrors();
 
-  const isFormValid = (name && !errors.length);
+  const isCategoryTheOnlyError = errors.length === 1 && errors[0].field === 'category';
+  const isFormValid = (name && (!errors.length || isCategoryTheOnlyError));
 
   useImperativeHandle(ref, () => ({
     setFormValues: (contact) => {
@@ -45,17 +45,17 @@ export default function useContactForm(onSubmit, ref) {
       try {
         const categoriesList = await CategoryService.getCategories();
 
-        setCategoryError(null);
-        setCategories(categoriesList);
+        removeError('category');
+        setCategories(categoriesList.sort((a, b) => a.name < b.name));
       } catch {
-        setCategoryError('We had a problem loading categories.');
+        setError({ field: 'category', message: 'We had a problem loading categories.' });
       } finally {
         setAreCategoriesLoading(false);
       }
     }
 
     fetchCategories();
-  }, [setCategoryError, setCategories, setAreCategoriesLoading]);
+  }, [setCategories, setAreCategoriesLoading]); // eslint-disable-line
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -105,7 +105,6 @@ export default function useContactForm(onSubmit, ref) {
     handleEmailChange,
     phone,
     handlePhoneChange,
-    categoryError,
     areCategoriesLoading,
     categoryId,
     setCategoryId,

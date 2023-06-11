@@ -4,7 +4,7 @@ import * as S from './styles';
 import failedLoading from '../../assets/images/failedLoading.svg';
 
 export default function FormGroup({
-  children, error, categoryError, isLoading,
+  children, error, isLoading,
 }) {
   return (
     <S.Container>
@@ -19,13 +19,11 @@ export default function FormGroup({
         )}
       </div>
 
-      {(error && !categoryError) && <small>{error}</small>}
-
-      {(!error && categoryError) && (
-        <div className="error-container">
-          <small>{categoryError}</small>
-          <img src={failedLoading} alt="Failed loading" />
-        </div>
+      {error && (
+      <div className="error-container">
+        <small>{error}</small>
+        {error.includes('categories') && <img src={failedLoading} alt="Failed loading" />}
+      </div>
       )}
     </S.Container>
   );
@@ -34,12 +32,10 @@ export default function FormGroup({
 FormGroup.propTypes = {
   children: PropTypes.node.isRequired,
   error: PropTypes.string,
-  categoryError: PropTypes.string,
   isLoading: PropTypes.bool,
 };
 
 FormGroup.defaultProps = {
   error: null,
-  categoryError: null,
   isLoading: false,
 };

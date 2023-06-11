@@ -20,7 +20,6 @@ const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
     handleEmailChange,
     phone,
     handlePhoneChange,
-    categoryError,
     areCategoriesLoading,
     categoryId,
     setCategoryId,
@@ -66,8 +65,8 @@ const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
       </FormGroup>
 
       <FormGroup
-        categoryError={categoryError}
         isLoading={areCategoriesLoading}
+        error={getErrorMessageByFieldName('category')}
       >
         <Select
           value={categoryId}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as S from './styles';
 import Button from '../Button';
 import ReactPortal from '../ReactPortal';
+import useAnimatedUnmount from '../../hooks/useAnimatedUnmount';
 
 export default function Modal({
   danger,
@@ -15,14 +16,24 @@ export default function Modal({
   visible,
   isLoading,
 }) {
-  if (!visible) {
+  // necessário para a animação de saída do componente
+  const { shouldRender, animatedElementRef } = useAnimatedUnmount(visible);
+
+  // sem animação, poderíamos utilizar !visible direto
+  if (!shouldRender) {
     return null;
   }
 
   return (
     <ReactPortal containerId="modal-root">
-      <S.Overlay>
-        <S.Container danger={danger}>
+      <S.Overlay
+        ref={animatedElementRef}
+        isClosing={!visible}
+      >
+        <S.Container
+          danger={danger}
+          isClosing={!visible}
+        >
           <h1>{title}</h1>
 
           <div className="modal-body">

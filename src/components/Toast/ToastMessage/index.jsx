@@ -5,7 +5,9 @@ import errorCircle from '../../../assets/images/icons/x-circle.svg';
 import successCircle from '../../../assets/images/icons/check-circle.svg';
 import * as S from './styles';
 
-export default function ToastMessage({ message, onRemoveMessage }) {
+export default function ToastMessage({
+  message, onRemoveMessage, isClosing, animatedRef,
+}) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onRemoveMessage(message.id);
@@ -24,6 +26,8 @@ export default function ToastMessage({ message, onRemoveMessage }) {
       onClick={handleRemoveToast}
       tabIndex={0} // torna o elemento acessível pelo tab
       role="button" // leitores de tela entendem que o elemento é clicável
+      isClosing={isClosing}
+      ref={animatedRef}
     >
       {message.type === 'danger' && <img src={errorCircle} alt="X" />}
       {message.type === 'success' && <img src={successCircle} alt="Check" />}
@@ -41,4 +45,6 @@ ToastMessage.propTypes = {
     duration: PropTypes.number,
   }).isRequired,
   onRemoveMessage: PropTypes.func.isRequired,
+  isClosing: PropTypes.bool.isRequired,
+  animatedRef: PropTypes.shape().isRequired,
 };
