@@ -41,13 +41,18 @@ export default function useContactForm(onSubmit, ref) {
   }), []);
 
   useEffect(() => {
+    // controller para cancelar requisições decorrentes do Strict Mode (React 18)
+    const controller = new AbortController();
+
     async function fetchCategories() {
       try {
-        const categoriesList = await CategoryService.getCategories();
+        const categoriesList = await CategoryService.getCategories(controller.signal);
 
         removeError('category');
         setCategories(categoriesList.sort((a, b) => a.name < b.name));
-      } catch {
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+
         setError({ field: 'category', message: 'We had a problem loading categories.' });
       } finally {
         setAreCategoriesLoading(false);
@@ -55,6 +60,8 @@ export default function useContactForm(onSubmit, ref) {
     }
 
     fetchCategories();
+
+    return () => controller.abort();
   }, [setCategories, setAreCategoriesLoading]); // eslint-disable-line
 
   const handleNameChange = (e) => {

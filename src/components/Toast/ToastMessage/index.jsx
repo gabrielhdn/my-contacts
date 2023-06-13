@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 
 import errorCircle from '../../../assets/images/icons/x-circle.svg';
 import successCircle from '../../../assets/images/icons/check-circle.svg';
 import * as S from './styles';
 
-export default function ToastMessage({
+function ToastMessage({
   message, onRemoveMessage, isClosing, animatedRef,
 }) {
   useEffect(() => {
@@ -48,3 +48,5 @@ ToastMessage.propTypes = {
   isClosing: PropTypes.bool.isRequired,
   animatedRef: PropTypes.shape().isRequired,
 };
+
+export default memo(ToastMessage);

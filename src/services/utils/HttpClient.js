@@ -10,6 +10,7 @@ class HttpClient {
     return this.makeRequest(endpoint, {
       method: 'GET',
       headers: options?.headers,
+      signal: options?.signal,
     });
   }
 
@@ -57,6 +58,7 @@ class HttpClient {
       method: options.method,
       body: JSON.stringify(options.body),
       headers,
+      signal: options.signal,
     });
 
     // * será undefined se a resposta não tiver corpo (204 No Content)

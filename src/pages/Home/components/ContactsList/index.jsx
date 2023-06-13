@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -8,7 +9,7 @@ import arrowIcon from '../../../../assets/images/icons/arrow.svg';
 import editIcon from '../../../../assets/images/icons/notepad.svg';
 import deleteIcon from '../../../../assets/images/icons/rubbishbin.svg';
 
-export default function ContactsList({
+function ContactsList({
   orderBy,
   onOrderByToggle,
   onOpenDeleteModal,
@@ -72,3 +73,5 @@ ContactsList.propTypes = {
     }),
   })).isRequired,
 };
+
+export default memo(ContactsList);

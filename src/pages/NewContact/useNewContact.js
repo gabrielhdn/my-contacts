@@ -22,11 +22,13 @@ export default function useNewContact() {
           duration: 5000,
         });
       });
-    } catch {
+    } catch (e) {
       safeAsyncAction(() => {
         toast({
           type: 'danger',
-          text: 'Failed to register a new contact!',
+          text: e.message.includes('e-mail')
+            ? e.message
+            : 'Failed to register a new contact!',
           duration: 5000,
         });
       });

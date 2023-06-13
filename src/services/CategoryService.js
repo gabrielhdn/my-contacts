@@ -6,8 +6,8 @@ class CategoryService {
     this.httpClient = new HttpClient('http://localhost:3001');
   }
 
-  async getCategories() {
-    const categories = await this.httpClient.get('/categories');
+  async getCategories(signal) {
+    const categories = await this.httpClient.get('/categories', { signal });
 
     return categories.map(CategoryMapper.toDomain);
   }

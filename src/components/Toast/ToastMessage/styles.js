@@ -46,7 +46,7 @@ export const Container = styled.div`
   animation: ${messageIn} 0.3s;
 
   ${({ isClosing }) => isClosing && css`
-    animation: ${messageOut} 0.3s;
+    animation: ${messageOut} 0.3s forwards;
   `}
 
   // acessa os estilos específicos de acordo com o tipo (default se nada for passado)

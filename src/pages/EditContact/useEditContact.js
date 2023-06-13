@@ -15,9 +15,12 @@ export default function useEditContact() {
   const safeAsyncAction = useSafeAsyncAction();
 
   useEffect(() => {
+    // controller para cancelar requisições decorrentes do Strict Mode (React 18)
+    const controller = new AbortController();
+
     async function getContact() {
       try {
-        const contact = await ContactService.getContactById(id);
+        const contact = await ContactService.getContactById(id, controller.signal);
 
         // impede que o código execute se o componente tiver sido desmontado
         safeAsyncAction(() => {
@@ -25,7 +28,9 @@ export default function useEditContact() {
           setContactName(contact.name);
           setIsLoading(false);
         });
-      } catch {
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+
         safeAsyncAction(() => {
           history.push('/');
           toast({
@@ -38,6 +43,8 @@ export default function useEditContact() {
     }
 
     getContact();
+
+    return () => controller.abort();
   }, [id, history, safeAsyncAction]);
 
   const handleSubmit = async (contact) => {
@@ -50,10 +57,12 @@ export default function useEditContact() {
         text: 'Contact successfully updated!',
         duration: 5000,
       });
-    } catch {
+    } catch (e) {
       toast({
         type: 'danger',
-        text: 'Failed to update this contact!',
+        text: e.message.includes('e-mail')
+          ? e.message
+          : 'Failed to register a new contact!',
         duration: 5000,
       });
     }

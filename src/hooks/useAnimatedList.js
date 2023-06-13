@@ -6,7 +6,6 @@ export default function useAnimatedList(initialValue = []) {
   const [items, setItems] = useState(initialValue);
   const [pendingRemovalItemsIds, setPendingRemovalItemsIds] = useState([]);
 
-  // feitos com useRef para não disparar renderizações
   const animatedRefs = useRef(new Map());
   const animationEndListeners = useRef(new Map());
 
@@ -43,7 +42,6 @@ export default function useAnimatedList(initialValue = []) {
     });
   }, [pendingRemovalItemsIds, handleAnimationEnd]);
 
-  // limpa todos os listeners quando o componente é desmontado
   useEffect(() => {
     const removeListeners = animationEndListeners.current;
 
