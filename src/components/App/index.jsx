@@ -6,7 +6,7 @@ import defaultTheme from '../../assets/styles/themes/default';
 
 import * as S from './styles';
 import Header from '../Header';
-import Routes from '../../Routes';
+import Router from '../../Router';
 import ToastContainer from '../Toast/ToastContainer';
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
 
         <S.Container>
           <Header />
-          <Routes />
+          <Router />
         </S.Container>
       </ThemeProvider>
     </BrowserRouter>
