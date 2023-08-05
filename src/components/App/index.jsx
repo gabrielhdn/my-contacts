@@ -11,7 +11,7 @@ import ToastContainer from '../Toast/ToastContainer';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <ThemeProvider theme={defaultTheme}>
         <GlobalStyles />
         <ToastContainer />
