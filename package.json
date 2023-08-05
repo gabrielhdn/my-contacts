@@ -1,6 +1,7 @@
 {
   "name": "fe",
   "version": "0.1.0",
+  "homepage": "https://gabrielhdn.github.io/my-contacts",
   "private": true,
   "dependencies": {
     "prop-types": "^15.8.1",
@@ -11,6 +12,8 @@
     "styled-components": "^5.3.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -41,6 +44,7 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "gh-pages": "^5.0.0",
     "react-error-overlay": "6.0.11"
   }
 }
